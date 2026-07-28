@@ -1,0 +1,20 @@
+{
+  "name": "storefront",
+  "version": "1.0.0",
+  "description": "Sample storefront with MongoDB and fake product data",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@faker-js/faker": "^9.6.0",
+    "ejs": "^3.1.10",
+    "express": "^4.21.2",
+    "express-session": "^1.18.1",
+    "mongoose": "^8.12.1"
+  }
+}
