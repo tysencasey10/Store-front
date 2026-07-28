@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Storefront</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body class="page page--home">
+    <main class="home">
+      <h1 class="home__title">Storefront Home</h1>
+      <% if (currentUser) { %>
+      <p class="home__welcome">Signed in as <strong><%= currentUser.username %></strong></p>
+      <% } %>
+      <div class="home-stack" role="group" aria-label="Store actions">
+        <div class="home-row">
+          <a class="home-row__btn" href="/show_catalog">Show Shop Catalog</a>
+        </div>
+        <div class="home-row">
+          <a class="home-row__btn" href="/show_cart">View Cart<% if (typeof cartItemCount !== 'undefined' && cartItemCount > 0) { %> (<%= cartItemCount %>)<% } %></a>
+        </div>
+        <div class="home-row">
+          <a class="home-row__btn" href="/past_orders">Past Orders</a>
+        </div>
+        <div class="home-row">
+          <a class="home-row__btn" href="/generate-data">Generate Fake Data</a>
+        </div>
+        <div class="home-row">
+          <form method="post" action="/logout">
+            <button type="submit" class="home-row__btn">Logout</button>
+          </form>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>

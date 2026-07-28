@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Past Orders</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body class="page page--plain">
+    <header class="topbar topbar--simple">
+      <a class="link link--plain" href="/">Shop Home</a>
+    </header>
+
+    <% if (flash) { %>
+    <div class="banner banner--<%= flash.type %>"><%= flash.text %></div>
+    <% } %>
+
+    <main class="orders-wrap">
+      <h1>Past Orders</h1>
+
+      <% if (!orders || orders.length === 0) { %>
+      <p class="empty">No past orders yet.</p>
+      <% } %>
+
+      <% if (orders && orders.length > 0) { %>
+      <% orders.forEach(function(order) { %>
+      <section class="order-block">
+        <div class="order-meta">
+          <p><strong>Order ID:</strong> <%= order.orderID %></p>
+          <p><strong>Date:</strong> <%= new Date(order.createdAt).toString() %></p>
+          <p><strong>Total:</strong> $<%= Number(order.total || 0).toFixed(2) %></p>
+        </div>
+
+        <div class="order-table-wrap">
+          <table class="orders-table">
+            <thead>
+              <tr>
+                <th>Product Name</th>
+                <th>Unit Price</th>
+                <th>Quantity</th>
+                <th>Total</th>
+                <th>Rating</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% order.items.forEach(function (item, idx) { %>
+              <tr>
+                <td><%= item.name %></td>
+                <td>$<%= Number(item.unitPrice).toFixed(2) %></td>
+                <td><%= item.quantity %></td>
+                <td>$<%= Number(item.total).toFixed(2) %></td>
+                <td class="orders-table__rating">
+                  <% if (item.review) { %>
+                    <% var s = starsFromAverage(item.review.rating); %>
+                    <div class="stars-row" aria-label="Rated <%= item.review.rating %> out of 5">
+                      <% for (var i = 0; i < s.full; i++) { %><span class="star star--full">★</span><% } %>
+                      <% if (s.half) { %><span class="star-slot star-slot--half" title="Half star"><span class="star-slot__glyph">★</span></span><% } %>
+                      <% for (var j = 0; j < s.empty; j++) { %><span class="star star--empty">☆</span><% } %>
+                    </div>
+                    <p class="review-rating-num"><%= Number(item.review.rating).toFixed(1) %> / 5</p>
+                    <% if (item.review.reviewText) { %>
+                    <p class="review-snippet"><%= item.review.reviewText %></p>
+                    <% } %>
+                  <% } else { %>
+                    <form class="review-form" method="post" action="/past_orders/review">
+                      <input type="hidden" name="orderID" value="<%= order.orderID %>" />
+                      <input type="hidden" name="productID" value="<%= item.productID %>" />
+                      <label class="review-form__label" for="rating-<%= order.orderID %>-<%= idx %>">Stars (½ steps)</label>
+                      <select
+                        name="rating"
+                        id="rating-<%= order.orderID %>-<%= idx %>"
+                        class="rating-select"
+                        autocomplete="off"
+                      >
+                        <option value="">Select rating…</option>
+                        <option value="1">1</option>
+                        <option value="1.5">1.5</option>
+                        <option value="2">2</option>
+                        <option value="2.5">2.5</option>
+                        <option value="3">3</option>
+                        <option value="3.5">3.5</option>
+                        <option value="4">4</option>
+                        <option value="4.5">4.5</option>
+                        <option value="5">5</option>
+                      </select>
+                      <label class="review-form__label" for="text-<%= order.orderID %>-<%= idx %>">Comment (optional)</label>
+                      <textarea
+                        name="reviewText"
+                        id="text-<%= order.orderID %>-<%= idx %>"
+                        class="review-form__textarea"
+                        rows="2"
+                        placeholder="Optional review text"
+                      ></textarea>
+                      <button type="submit" class="btn-native" disabled>Submit Rating</button>
+                    </form>
+                  <% } %>
+                </td>
+              </tr>
+              <% }); %>
+            </tbody>
+          </table>
+        </div>
+      </section>
+      <% }); %>
+      <% } %>
+    </main>
+
+    <script>
+      document.querySelectorAll(".review-form").forEach(function (form) {
+        var sel = form.querySelector(".rating-select");
+        var btn = form.querySelector('button[type="submit"]');
+        function upd() {
+          btn.disabled = !sel.value;
+        }
+        sel.addEventListener("change", upd);
+        upd();
+      });
+    </script>
+  </body>
+</html>

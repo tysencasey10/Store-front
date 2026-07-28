@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Product catalog</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body class="page page--plain">
+    <header class="topbar topbar--simple">
+      <a class="link link--plain" href="/">Shop Home</a>
+      <a class="link link--plain" href="/show_cart">View Cart<% if (typeof cartItemCount !== 'undefined' && cartItemCount > 0) { %> (<%= cartItemCount %>)<% } %></a>
+    </header>
+
+    <% if (flash) { %>
+    <div class="banner banner--<%= flash.type %>"><%= flash.text %></div>
+    <% } %>
+
+    <% if (!products || products.length === 0) { %>
+    <p class="empty">No products yet. Use <a href="/generate-data">Generate Fake Data</a> first.</p>
+    <% } else { %>
+    <section class="grid grid--catalog">
+      <% products.forEach(function (p) { %>
+      <% var stock = (typeof p.quantity === 'number') ? p.quantity : 0; %>
+      <article class="card card--shop">
+        <img class="card__img" src="<%= p.image %>" alt="" loading="lazy" />
+        <div class="card__body">
+          <h2 class="card__name"><%= p.name %></h2>
+          <p class="card__price">$<%= Number(p.price).toFixed(2) %></p>
+          <% var rs = starsFromAverage(p.reviewAvg); %>
+          <% if (p.reviewCount > 0 && p.reviewAvg != null) { %>
+          <div class="card__reviews" aria-label="Average rating">
+            <div class="stars-row stars-row--small">
+              <% for (var ri = 0; ri < rs.full; ri++) { %><span class="star star--full">★</span><% } %>
+              <% if (rs.half) { %><span class="star-slot star-slot--half" title="Half star"><span class="star-slot__glyph">★</span></span><% } %>
+              <% for (var rj = 0; rj < rs.empty; rj++) { %><span class="star star--empty">☆</span><% } %>
+            </div>
+            <p class="card__avg-display">
+              <strong>Average:</strong>
+              <%= Number(rs.display).toFixed(1) %> / 5
+            </p>
+            <p class="card__review-count">
+              (<%= p.reviewCount %> <%= p.reviewCount === 1 ? "Review" : "Reviews" %>)
+            </p>
+          </div>
+          <% } else { %>
+          <p class="card__meta card__meta--muted">No reviews yet.</p>
+          <% } %>
+          <p class="card__meta"><strong>In stock:</strong> <%= stock %></p>
+          <p class="card__desc"><%= p.description %></p>
+          <form class="card__form" method="post" action="/cart/add">
+            <input type="hidden" name="productID" value="<%= p.productID %>" />
+            <button type="submit" class="btn-native">Add to Cart</button>
+          </form>
+        </div>
+      </article>
+      <% }); %>
+    </section>
+    <% } %>
+  </body>
+</html>

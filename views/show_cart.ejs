@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Shopping cart</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body class="page page--plain">
+    <header class="topbar topbar--simple">
+      <a class="link link--plain" href="/">Shop Home</a>
+      <a class="link link--plain" href="/show_catalog">Show Shop Catalog</a>
+    </header>
+
+    <% if (flash) { %>
+    <div class="banner banner--<%= flash.type %>"><%= flash.text %></div>
+    <% } %>
+
+    <% if (lines && lines.length > 0) { %>
+    <div class="checkout-bar">
+      <form method="post" action="/checkout" class="checkout-bar__form">
+        <button type="submit" class="btn-native">Checkout</button>
+      </form>
+    </div>
+
+    <div class="cart-list">
+      <% lines.forEach(function (line) { %>
+      <article class="cart-card">
+        <img class="cart-card__img" src="<%= line.image %>" alt="" loading="lazy" />
+        <div class="cart-card__body">
+          <h2 class="cart-card__name"><%= line.name %></h2>
+          <p class="cart-card__price">$<%= line.price.toFixed(2) %></p>
+          <p class="cart-card__qty"><strong>Quantity in cart:</strong> <%= line.quantity %></p>
+          <p class="cart-card__desc"><%= line.description %></p>
+          <form method="post" action="/cart/remove" class="cart-card__form">
+            <input type="hidden" name="productID" value="<%= line.productID %>" />
+            <button type="submit" class="btn-native">Remove From Cart</button>
+          </form>
+        </div>
+      </article>
+      <% }); %>
+    </div>
+    <% } else { %>
+    <p class="empty">Your cart is empty. <a href="/show_catalog">Show Shop Catalog</a></p>
+    <% } %>
+  </body>
+</html>

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body class="page page--plain">
+    <main class="auth-wrap">
+      <h1>Storefront Login</h1>
+      <form class="auth-row" method="post" action="/login">
+        <input type="text" name="username" placeholder="Username" required />
+        <button type="submit" class="btn-native">Login</button>
+      </form>
+      <form class="auth-row" method="get" action="/create_user">
+        <input type="text" placeholder="Username" disabled />
+        <button type="submit" class="btn-native">Register</button>
+      </form>
+    </main>
+  </body>
+</html>
